@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SearchPalette } from "@/components/SearchPalette";
 import { useCartStore } from "@/lib/cart-store";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -146,6 +147,9 @@ export function Nav() {
                 <User className="h-4 w-4" />
               </Link>
             </Button>
+
+            {/* Theme toggle */}
+            <ThemeToggle className="ml-1 hidden sm:inline-flex" />
 
             {/* Cart */}
             <Link
