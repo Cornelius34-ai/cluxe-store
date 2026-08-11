@@ -16,6 +16,12 @@ const NAV_LINKS = [
   { href: "/search", label: "Browse" },
 ];
 
+const ADMIN_LINKS = [
+  { href: "/admin/inventory", label: "Inventory" },
+  { href: "/admin/discounts", label: "Discounts" },
+  { href: "/admin/coupons", label: "Coupons" },
+];
+
 export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
@@ -119,13 +125,18 @@ export function Nav() {
               </Link>
             ))}
             {isAdmin && (
-              <Link
-                href="/admin/inventory"
-                className="ml-1 inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Admin
-              </Link>
+              <div className="ml-2 flex items-center gap-1 rounded-md bg-foreground px-1.5 py-1">
+                <ShieldCheck className="ml-1 h-3.5 w-3.5 text-background" />
+                {ADMIN_LINKS.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="rounded-sm px-2 py-1 text-xs font-medium text-background transition-colors hover:bg-background/10"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
             )}
           </nav>
 

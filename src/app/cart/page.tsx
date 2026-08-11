@@ -1,19 +1,19 @@
+import { CartView } from "@/components/CartView";
+
+export const dynamic = "force-dynamic";
+
 export const metadata = {
-  title: "Cart",
-  description: "Your shopping cart",
+  title: "Cart — cluxe",
+  description: "Your shopping cart.",
 };
 
 export default function CartPage() {
   return (
-    <section className="py-12">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-2xl font-bold text-foreground mb-6">
-          Cart
-        </h1>
-        <p className="text-muted-foreground">
-          Your cart is empty.
-        </p>
+    <main className="mx-auto w-full max-w-6xl px-6 py-12">
+      <h1 className="text-3xl font-semibold tracking-tight">Cart</h1>
+      <div className="mt-8">
+        <CartView />
       </div>
-    </section>
+    </main>
   );
 }

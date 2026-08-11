@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCategories, getFeaturedProducts } from "@/lib/supabase/queries";
 import { formatPriceCents } from "@/types/database";
 import { Reveal } from "@/components/Reveal";
+import { ProductCard } from "@/components/ProductCard";
 
 export const dynamic = "force-dynamic";
 
@@ -58,20 +59,7 @@ export default async function Home() {
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {featured.map((product, i) => (
             <Reveal key={product.id} delay={i * 0.04}>
-              <Link
-                href={`/product/${product.slug}`}
-                className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent"
-              >
-                <div className="aspect-square bg-muted" />
-                <div className="p-4">
-                  <h3 className="line-clamp-2 text-sm font-medium leading-tight group-hover:underline">
-                    {product.title}
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold">
-                    {formatPriceCents(product.retail_price_cents, product.currency)}
-                  </p>
-                </div>
-              </Link>
+              <ProductCard product={product} />
             </Reveal>
           ))}
         </div>

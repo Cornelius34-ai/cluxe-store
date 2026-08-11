@@ -69,8 +69,20 @@ export default async function ProductPage({
               </div>
             )}
 
-            <div className="mt-4 text-2xl font-semibold">
-              {formatPriceCents(product.retail_price_cents, product.currency)}
+            <div className="mt-4 flex items-baseline gap-3">
+              <div className="text-2xl font-semibold">
+                {formatPriceCents(product.retail_price_cents, product.currency)}
+              </div>
+              {product.compare_at_cents != null && product.compare_at_cents > product.retail_price_cents && (
+                <>
+                  <div className="text-lg text-muted-foreground line-through">
+                    {formatPriceCents(product.compare_at_cents, product.currency)}
+                  </div>
+                  <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
+                    Save {formatPriceCents(product.compare_at_cents - product.retail_price_cents, product.currency)}
+                  </span>
+                </>
+              )}
             </div>
 
             {product.description && (
