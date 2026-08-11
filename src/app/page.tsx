@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCategories, getFeaturedProducts } from "@/lib/supabase/queries";
 import { formatPriceCents } from "@/types/database";
+import { Reveal } from "@/components/Reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -11,78 +12,69 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="flex min-h-screen flex-col py-12">
+    <main className="flex min-h-screen flex-col">
       {/* Hero */}
-      <section className="mx-auto w-full max-w-4xl px-6 space-y-4">
-        <h1 className="text-3xl font-bold text-foreground">
-          Welcome to cluxe
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl">
+      <Reveal as="section" className="mx-auto w-full max-w-7xl px-6 pt-16 pb-12">
+        <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
           Modern clothing, considered design.
+        </h1>
+        <p className="mt-4 max-w-2xl text-balance text-lg text-muted-foreground">
+          Curated essentials, built to last. Free shipping over $100.
         </p>
-      </section>
+      </Reveal>
 
       {/* Categories */}
-      <section className="mx-auto w-full max-w-4xl px-6 mt-12">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">
-          Categories
-        </h2>
-        {categories.length === 0 ? (
-          <div className="rounded border bg-muted p-6 text-center">
-            <span className="text-muted-foreground text-sm">
-              No categories yet
-            </span>
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category) => (
+      <section className="mx-auto w-full max-w-7xl px-6 py-8">
+        <Reveal>
+          <h2 className="text-2xl font-semibold tracking-tight">Shop by category</h2>
+        </Reveal>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((category, i) => (
+            <Reveal key={category.id} delay={i * 0.05}>
               <Link
-                key={category.id}
                 href={`/category/${category.slug}`}
-                className="group rounded border bg-background p-6 transition hover:border-foreground"
+                className="group block overflow-hidden rounded-lg border bg-card p-8 transition-colors hover:bg-accent"
               >
-                <h3 className="text-lg font-semibold text-foreground group-hover:underline">
+                <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Collection
+                </div>
+                <div className="mt-2 text-3xl font-semibold tracking-tight">
                   {category.name}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  /{category.slug}
-                </p>
+                </div>
+                <div className="mt-4 inline-flex items-center text-sm font-medium text-foreground/80 group-hover:text-foreground">
+                  Browse {category.name.toLowerCase()} →
+                </div>
               </Link>
-            ))}
-          </div>
-        )}
+            </Reveal>
+          ))}
+        </div>
       </section>
 
-      {/* Featured products */}
-      <section className="mx-auto w-full max-w-4xl px-6 mt-12">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">
-          Featured
-        </h2>
-        {featured.length === 0 ? (
-          <div className="rounded border bg-muted p-6 text-center">
-            <span className="text-muted-foreground text-sm">
-              No featured products yet
-            </span>
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((product) => (
+      {/* Featured */}
+      <section className="mx-auto w-full max-w-7xl px-6 py-8 pb-24">
+        <Reveal>
+          <h2 className="text-2xl font-semibold tracking-tight">Featured</h2>
+        </Reveal>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {featured.map((product, i) => (
+            <Reveal key={product.id} delay={i * 0.04}>
               <Link
-                key={product.id}
                 href={`/product/${product.slug}`}
-                className="group rounded border bg-background p-4 transition hover:border-foreground"
+                className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent"
               >
-                <div className="aspect-square rounded bg-muted mb-3" />
-                <h3 className="text-sm font-medium text-foreground line-clamp-2 group-hover:underline">
-                  {product.title}
-                </h3>
-                <p className="mt-1 text-sm font-semibold text-foreground">
-                  {formatPriceCents(product.retail_price_cents, product.currency)}
-                </p>
+                <div className="aspect-square bg-muted" />
+                <div className="p-4">
+                  <h3 className="line-clamp-2 text-sm font-medium leading-tight group-hover:underline">
+                    {product.title}
+                  </h3>
+                  <p className="mt-2 text-sm font-semibold">
+                    {formatPriceCents(product.retail_price_cents, product.currency)}
+                  </p>
+                </div>
               </Link>
-            ))}
-          </div>
-        )}
+            </Reveal>
+          ))}
+        </div>
       </section>
     </main>
   );
