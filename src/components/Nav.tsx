@@ -18,6 +18,7 @@ const NAV_LINKS = [
 
 const ADMIN_LINKS = [
   { href: "/admin/inventory", label: "Inventory" },
+  { href: "/admin/orders", label: "Orders" },
   { href: "/admin/discounts", label: "Discounts" },
   { href: "/admin/coupons", label: "Coupons" },
 ];

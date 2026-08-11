@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Trash2, Ticket, Check, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { formatPriceCents } from "@/types/database";
 
 type AppliedCoupon = {
   code: string;
+  coupon_id?: string;
   discount_cents: number;
 };
 
@@ -46,7 +48,11 @@ export function CartView() {
         setError(data.error ?? "Could not apply coupon");
         return;
       }
-      setApplied({ code: code.trim().toUpperCase(), discount_cents: data.discount_cents });
+      setApplied({
+        code: code.trim().toUpperCase(),
+        coupon_id: data.coupon_id,
+        discount_cents: data.discount_cents,
+      });
       setCode("");
     } catch (e) {
       setError((e as Error).message);
@@ -166,8 +172,16 @@ export function CartView() {
             )}
           </div>
 
-          <Button className="mt-6 w-full" size="lg">
-            Checkout
+          <Button asChild className="mt-6 w-full" size="lg">
+            <Link
+              href={
+                applied
+                  ? `/checkout?discount=${applied.discount_cents}&coupon=${applied.coupon_id ?? ""}`
+                  : "/checkout"
+              }
+            >
+              Checkout
+            </Link>
           </Button>
         </div>
       </div>
