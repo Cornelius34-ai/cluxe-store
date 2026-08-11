@@ -134,6 +134,35 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 /**
+ * Fetch a single category by its slug.
+ */
+export async function getCategoryBySlug(
+  slug: string
+): Promise<Category | null> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id, slug, name, image_url, display_order, created_at")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) {
+      console.error("getCategoryBySlug error:", error);
+      return useMock()
+        ? (MOCK_CATEGORIES.find((c) => c.slug === slug) ?? null)
+        : null;
+    }
+    return (data ?? null) as Category | null;
+  } catch (e) {
+    console.error("getCategoryBySlug unavailable:", e);
+    return useMock()
+      ? (MOCK_CATEGORIES.find((c) => c.slug === slug) ?? null)
+      : null;
+  }
+}
+
+/**
  * Fetch featured products for the home page.
  * Falls back to mock data on error or empty result.
  */

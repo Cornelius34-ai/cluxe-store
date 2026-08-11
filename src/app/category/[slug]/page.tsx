@@ -1,21 +1,97 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+
+import {
+  getCategoryBySlug,
+  getProductsByCategory,
+} from "@/lib/supabase/queries";
+import { formatPriceCents } from "@/types/database";
+import { Reveal } from "@/components/Reveal";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Category",
-  description: "Browse products in this category",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const category = await getCategoryBySlug(slug);
+  return {
+    title: category ? `${category.name} — cluxe` : "Category — cluxe",
+    description: category
+      ? `Shop ${category.name.toLowerCase()} at cluxe.`
+      : "Browse this category.",
+  };
+}
 
-export default function CategoryPage() {
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const [category, products] = await Promise.all([
+    getCategoryBySlug(slug),
+    getProductsByCategory(slug, 24),
+  ]);
+
+  if (!category) {
+    notFound();
+  }
+
   return (
-    <section className="py-12">
-      <div className="mx-auto max-w-7xl">
-        <h1 className="text-2xl font-bold text-foreground mb-6">
-          Category Name
+    <main className="mx-auto w-full max-w-7xl px-6 py-12">
+      <Reveal>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Link>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
+          {category.name}
         </h1>
-        <p className="text-muted-foreground mb-8">
-          No products available yet. Wire up Supabase to populate the catalog.
+        <p className="mt-2 text-sm text-muted-foreground">
+          {products.length === 0
+            ? "No products yet"
+            : `${products.length} ${products.length === 1 ? "product" : "products"}`}
         </p>
-      </div>
-    </section>
+      </Reveal>
+
+      {products.length === 0 ? (
+        <div className="mt-12 rounded-lg border bg-card p-12 text-center">
+          <p className="text-muted-foreground">
+            No products in this category yet.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {products.map((product, i) => (
+            <Reveal key={product.id} delay={i * 0.04}>
+              <Link
+                href={`/product/${product.slug}`}
+                className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent"
+              >
+                <div className="aspect-square bg-muted" />
+                <div className="p-4">
+                  <h3 className="line-clamp-2 text-sm font-medium leading-tight group-hover:underline">
+                    {product.title}
+                  </h3>
+                  <p className="mt-2 text-sm font-semibold">
+                    {formatPriceCents(
+                      product.retail_price_cents,
+                      product.currency
+                    )}
+                  </p>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      )}
+    </main>
   );
 }
