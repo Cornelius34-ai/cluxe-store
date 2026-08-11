@@ -8,9 +8,11 @@ import {
   getProductVariants,
   getStockMovements,
   getCategories,
+  getDiscountsForProduct,
 } from "@/lib/supabase/queries";
 import { ProductEditForm } from "@/components/ProductEditForm";
 import { ProductEditTabs } from "@/components/ProductEditTabs";
+import { ProductDiscounts } from "@/components/ProductDiscounts";
 import { Reveal } from "@/components/Reveal";
 
 export const dynamic = "force-dynamic";
@@ -33,12 +35,18 @@ export default async function AdminProductEditPage({ params }: { params: Params 
     );
   }
 
-  const [product, variants, movements, categories] = await Promise.all([
+  const [product, variants, movements, categories, discounts] = await Promise.all([
     getProductAdmin(id),
     getProductVariants(id),
     getStockMovements(id, 50),
     getCategories(),
+    Promise.resolve(null as never),
   ]);
+
+  // getDiscountsForProduct needs category_id which we don't know until product loads
+  const productDiscounts = product
+    ? await getDiscountsForProduct(product.id, product.category_id)
+    : [];
 
   if (!product) notFound();
 
@@ -69,6 +77,10 @@ export default async function AdminProductEditPage({ params }: { params: Params 
             variants={variants}
             movements={movements}
           />
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <ProductDiscounts productId={product.id} discounts={productDiscounts} />
         </Reveal>
       </div>
     </main>

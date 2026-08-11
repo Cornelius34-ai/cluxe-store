@@ -211,6 +211,33 @@ export async function getDiscountsAdmin(): Promise<Discount[]> {
   } catch (e) { console.error("getDiscountsAdmin unavailable:", e); return []; }
 }
 
+/**
+ * Fetch active discounts that apply to a specific product
+ * (site-wide + category-scoped if product has a category + product-scoped).
+ */
+export async function getDiscountsForProduct(productId: string, categoryId: string | null): Promise<Discount[]> {
+  try {
+    const supabase = await createClient();
+    const ors = [`product_id.eq.${productId}`];
+    if (categoryId) ors.push(`category_id.eq.${categoryId}`);
+    // For site-wide (no product_id, no category_id) — easiest to fetch all and filter
+    const { data, error } = await supabase.from("discounts").select("*")
+      .or(ors.join(","))
+      .eq("is_active", true);
+    if (error) { console.error("getDiscountsForProduct error:", error); return []; }
+    const list = (data ?? []) as Discount[];
+
+    const { data: siteWide } = await supabase.from("discounts").select("*")
+      .is("product_id", null).is("category_id", null).eq("is_active", true);
+    const now = Date.now();
+    return [...list, ...((siteWide ?? []) as Discount[])].filter((d) => {
+      if (d.starts_at && new Date(d.starts_at).getTime() > now) return false;
+      if (d.ends_at && new Date(d.ends_at).getTime() <= now) return false;
+      return true;
+    });
+  } catch (e) { console.error("getDiscountsForProduct unavailable:", e); return []; }
+}
+
 export async function getCouponsAdmin(): Promise<(Coupon & { uses: number; discount: Discount | null })[]> {
   try {
     const supabase = await createClient();

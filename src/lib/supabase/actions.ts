@@ -269,6 +269,8 @@ export async function createDiscount(formData: FormData): Promise<Result<{ id: s
       p_scope: scope,
       p_starts_at: starts_at,
       p_ends_at: ends_at,
+      p_product_id: scope === "product" ? (String(formData.get("product_id") ?? "") || null) : null,
+      p_category_id: scope === "category" ? (String(formData.get("category_id") ?? "") || null) : null,
       p_coupon_code: coupon_code || null,
       p_max_uses: max_uses,
       p_min_order_cents: min_order_cents,
