@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* Define our design tokens using Tailwind v4's CSS-first @theme */
+@theme {
+  /* Color palette */
+  --color-primary: #2563eb; /* blue-600 */
+  --color-primary-foreground: #ffffff;
+  
+  --color-secondary: #64748b; /* slate-500 */
+  --color-secondary-foreground: #ffffff;
+  
+  --color-accent: #f97316; /* orange-500 */
+  --color-accent-foreground: #ffffff;
+  
+  --color-muted: #f8fafc; /* slate-50 */
+  --color-muted-foreground: #334155; /* slate-700 */
+  
+  --color-border: #e2e8f0; /* slate-200 */
+  --color-ring: #2563eb; /* blue-600 */
+  
+  /* Radius */
+  --color-radius: 0.5rem;
+  
+  /* Fonts (already set by Geist, but we can override if needed) */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Dark theme overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #3b82f6; /* blue-500 */
+    --color-primary-foreground: #ffffff;
+    
+    --color-secondary: #94a3b8; /* slate-400 */
+    --color-secondary-foreground: #ffffff;
+    
+    --color-accent: #fb923c; /* orange-400 */
+    --color-accent-foreground: #ffffff;
+    
+    --color-muted: #1e293b; /* slate-800 */
+    --color-muted-foreground: #cbd5e1; /* slate-300 */
+    
+    --color-border: #334155; /* slate-700 */
+    --color-ring: #3b82f6; /* blue-500 */
+    
+    --color-radius: 0.5rem;
+  }
+}
+
+/* Base styles */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
