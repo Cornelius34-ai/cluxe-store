@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Star } from "lucide-react";
 
-import { getProductBySlug } from "@/lib/supabase/queries";
+import { getProductBySlug, getDiscountsForProduct } from "@/lib/supabase/queries";
 import { formatPriceCents } from "@/types/database";
+import { computeEffectivePricing } from "@/lib/pricing";
 import { Reveal } from "@/components/Reveal";
 import { StockAndAddToCart } from "@/components/StockAndAddToCart";
 
@@ -35,6 +36,9 @@ export default async function ProductPage({
     notFound();
   }
 
+  const discounts = await getDiscountsForProduct(product.id, product.category_id);
+  const pricing = computeEffectivePricing(product, discounts);
+
   return (
     <main className="mx-auto w-full max-w-7xl px-6 py-12">
       <Reveal>
@@ -50,7 +54,13 @@ export default async function ProductPage({
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         {/* Image placeholder */}
         <Reveal>
-          <div className="aspect-square rounded-lg border bg-muted" />
+          <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
+            {pricing.isOnSale && (
+              <span className="absolute left-4 top-4 rounded-full bg-foreground px-3 py-1 text-xs font-semibold uppercase tracking-wide text-background">
+                Sale
+              </span>
+            )}
+          </div>
         </Reveal>
 
         {/* Details */}
@@ -69,17 +79,18 @@ export default async function ProductPage({
               </div>
             )}
 
-            <div className="mt-4 flex items-baseline gap-3">
-              <div className="text-2xl font-semibold">
-                {formatPriceCents(product.retail_price_cents, product.currency)}
+            <div className="mt-4 flex flex-wrap items-baseline gap-3">
+              <div className={`text-2xl font-semibold ${pricing.isOnSale ? "text-destructive" : ""}`}>
+                {formatPriceCents(pricing.currentPriceCents, product.currency)}
               </div>
-              {product.compare_at_cents != null && product.compare_at_cents > product.retail_price_cents && (
+              {pricing.isOnSale && pricing.strikeThroughCents > pricing.currentPriceCents && (
                 <>
                   <div className="text-lg text-muted-foreground line-through">
-                    {formatPriceCents(product.compare_at_cents, product.currency)}
+                    {formatPriceCents(pricing.strikeThroughCents, product.currency)}
                   </div>
-                  <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
-                    Save {formatPriceCents(product.compare_at_cents - product.retail_price_cents, product.currency)}
+                  <span className="rounded-full bg-foreground px-2.5 py-0.5 text-xs font-medium text-background">
+                    Save {formatPriceCents(pricing.savingsCents, product.currency)}
+                    {pricing.discountLabel && ` · ${pricing.discountLabel}`}
                   </span>
                 </>
               )}

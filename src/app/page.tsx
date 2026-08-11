@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { getCategories, getFeaturedProducts } from "@/lib/supabase/queries";
-import { formatPriceCents } from "@/types/database";
+import { getCategories, getFeaturedProducts, getDiscountsAdmin } from "@/lib/supabase/queries";
 import { Reveal } from "@/components/Reveal";
 import { ProductCard } from "@/components/ProductCard";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [categories, featured] = await Promise.all([
+  const [categories, featured, allDiscounts] = await Promise.all([
     getCategories(),
     getFeaturedProducts(4),
+    getDiscountsAdmin(),
   ]);
 
   return (
@@ -57,11 +57,19 @@ export default async function Home() {
           <h2 className="text-2xl font-semibold tracking-tight">Featured</h2>
         </Reveal>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((product, i) => (
-            <Reveal key={product.id} delay={i * 0.04}>
-              <ProductCard product={product} />
-            </Reveal>
-          ))}
+          {featured.map((product, i) => {
+            const applicable = allDiscounts.filter(
+              (d) =>
+                d.scope === "site" ||
+                (d.scope === "product" && d.product_id === product.id) ||
+                (d.scope === "category" && d.category_id === product.category_id)
+            );
+            return (
+              <Reveal key={product.id} delay={i * 0.04}>
+                <ProductCard product={product} discounts={applicable} />
+              </Reveal>
+            );
+          })}
         </div>
       </section>
     </main>

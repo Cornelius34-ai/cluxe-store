@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import {
   getCategoryBySlug,
   getProductsByCategory,
+  getDiscountsAdmin,
 } from "@/lib/supabase/queries";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
@@ -32,9 +33,10 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [category, products] = await Promise.all([
+  const [category, products, allDiscounts] = await Promise.all([
     getCategoryBySlug(slug),
     getProductsByCategory(slug, 24),
+    getDiscountsAdmin(),
   ]);
 
   if (!category) {
@@ -69,11 +71,19 @@ export default async function CategoryPage({
         </div>
       ) : (
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {products.map((product, i) => (
-            <Reveal key={product.id} delay={i * 0.04}>
-              <ProductCard product={product} />
-            </Reveal>
-          ))}
+          {products.map((product, i) => {
+            const applicable = allDiscounts.filter(
+              (d) =>
+                d.scope === "site" ||
+                (d.scope === "product" && d.product_id === product.id) ||
+                (d.scope === "category" && d.category_id === product.category_id)
+            );
+            return (
+              <Reveal key={product.id} delay={i * 0.04}>
+                <ProductCard product={product} discounts={applicable} />
+              </Reveal>
+            );
+          })}
         </div>
       )}
     </main>

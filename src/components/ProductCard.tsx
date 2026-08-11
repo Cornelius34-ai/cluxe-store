@@ -1,17 +1,19 @@
 import Link from "next/link";
 
 import { formatPriceCents } from "@/types/database";
-import type { Product } from "@/types/database";
+import type { Product, Discount } from "@/types/database";
 import { cn } from "@/lib/utils";
+import { computeEffectivePricing } from "@/lib/pricing";
 
 type Props = {
   product: Product;
+  /** If provided, used to compute the effective (discounted) price. */
+  discounts?: Discount[];
   className?: string;
 };
 
-export function ProductCard({ product, className }: Props) {
-  const onSale =
-    product.compare_at_cents != null && product.compare_at_cents > product.retail_price_cents;
+export function ProductCard({ product, discounts = [], className }: Props) {
+  const pricing = computeEffectivePricing(product, discounts);
 
   return (
     <Link
@@ -22,9 +24,9 @@ export function ProductCard({ product, className }: Props) {
       )}
     >
       <div className="relative aspect-square bg-muted">
-        {onSale && (
+        {pricing.isOnSale && (
           <span className="absolute left-3 top-3 rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
-            Sale
+            {pricing.discountLabel ?? "Sale"}
           </span>
         )}
       </div>
@@ -33,12 +35,12 @@ export function ProductCard({ product, className }: Props) {
           {product.title}
         </h3>
         <div className="mt-2 flex items-baseline gap-2">
-          <span className={cn("text-sm font-semibold", onSale && "text-destructive")}>
-            {formatPriceCents(product.retail_price_cents, product.currency)}
+          <span className={cn("text-sm font-semibold", pricing.isOnSale && "text-destructive")}>
+            {formatPriceCents(pricing.currentPriceCents, product.currency)}
           </span>
-          {onSale && product.compare_at_cents != null && (
+          {pricing.isOnSale && pricing.strikeThroughCents > pricing.currentPriceCents && (
             <span className="text-xs text-muted-foreground line-through">
-              {formatPriceCents(product.compare_at_cents, product.currency)}
+              {formatPriceCents(pricing.strikeThroughCents, product.currency)}
             </span>
           )}
         </div>
