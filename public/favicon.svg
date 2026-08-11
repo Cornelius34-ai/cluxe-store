@@ -1,3 +1,20 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <path d="M16 4 L16 28 M12 28 L20 28 M16 12 L8 6 M16 12 L24 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Favicon uses a fixed dark color; matches both light and dark browser tab bars
+       because most browsers auto-invert favicon color or use a contrasting backdrop. -->
+  <g>
+    <path
+      fill="#0a0a0a"
+      d="M 22 6
+         A 10 10 0 1 0 22 26
+         L 22 22.5
+         A 6.5 6.5 0 1 1 22 9.5
+         Z"
+    />
+    <line
+      x1="22" y1="16" x2="29" y2="16"
+      stroke="#0a0a0a"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+  </g>
 </svg>
