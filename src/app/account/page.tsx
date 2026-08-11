@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { LogIn, ShieldCheck, User as UserIcon, Package } from "lucide-react";
+import { LogIn, ShieldCheck, User as UserIcon, Package, LogOut } from "lucide-react";
 
 import { getCurrentProfile } from "@/lib/supabase/auth";
 import { Reveal } from "@/components/Reveal";
+import { SignOutButton } from "@/components/SignOutButton";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,10 @@ export default async function AccountPage() {
           </Link>
           <p className="mt-4 text-xs text-muted-foreground">
             New here?{" "}
-            <Link href="/login?mode=signup" className="underline">
+            <Link
+              href="/login?mode=signup&next=/account"
+              className="underline"
+            >
               Create an account
             </Link>
           </p>
@@ -48,6 +51,11 @@ export default async function AccountPage() {
         <h1 className="text-3xl font-semibold tracking-tight">Account</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Signed in as <span className="font-medium">{profile.email}</span>
+          {profile.display_name && (
+            <>
+              {" "}· <span className="font-medium">{profile.display_name}</span>
+            </>
+          )}
         </p>
       </Reveal>
 
@@ -77,6 +85,10 @@ export default async function AccountPage() {
             </Link>
           </Reveal>
         )}
+
+        <Reveal delay={0.15} className="sm:col-span-2">
+          <SignOutButton />
+        </Reveal>
       </div>
     </main>
   );
