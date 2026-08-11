@@ -39,7 +39,18 @@ export type Profile = {
   full_name: string | null;
   display_name: string | null;
   email: string | null;
+  is_admin: boolean;
   created_at: string;
+};
+
+export type StockAuditLog = {
+  id: string;
+  product_id: string;
+  old_stock: number;
+  new_stock: number;
+  changed_by: string | null;
+  changed_at: string;
+  note: string | null;
 };
 
 // Helper: format cents as a localized price string

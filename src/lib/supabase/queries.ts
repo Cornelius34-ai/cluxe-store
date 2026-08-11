@@ -261,3 +261,27 @@ export async function getProductBySlug(
     return null;
   }
 }
+
+/**
+ * Fetch all products (admin use). No mock fallback — admin needs the truth.
+ */
+export async function getAllProductsAdmin(): Promise<Product[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id, slug, title, description, category_id, retail_price_cents, currency, stock, is_featured, is_active, rating_avg, rating_count, created_at"
+      )
+      .order("title", { ascending: true });
+
+    if (error) {
+      console.error("getAllProductsAdmin error:", error);
+      return [];
+    }
+    return (data ?? []) as Product[];
+  } catch (e) {
+    console.error("getAllProductsAdmin unavailable:", e);
+    return [];
+  }
+}

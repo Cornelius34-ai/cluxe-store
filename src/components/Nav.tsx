@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, User } from "lucide-react";
+import { Search, ShoppingBag, User, ShieldCheck } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ const NAV_LINKS = [
 export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   const items = useCartStore((state) => state.items);
   const cartCount = items.reduce((sum: number, item) => sum + item.quantity, 0);
@@ -39,6 +40,20 @@ export function Nav() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Check if current user is admin (client-side, for nav UI)
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch("/api/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!cancelled && d?.isAdmin) setIsAdmin(true);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -86,6 +101,15 @@ export function Nav() {
                 {l.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                href="/admin/inventory"
+                className="ml-1 inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* Right cluster */}
@@ -117,8 +141,10 @@ export function Nav() {
             </Button>
 
             {/* Account */}
-            <Button variant="ghost" size="icon" aria-label="Account">
-              <User className="h-4 w-4" />
+            <Button asChild variant="ghost" size="icon" aria-label="Account">
+              <Link href="/account">
+                <User className="h-4 w-4" />
+              </Link>
             </Button>
 
             {/* Cart */}
