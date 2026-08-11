@@ -73,16 +73,16 @@ export function Nav() {
             className="flex items-center gap-2 font-semibold tracking-tight text-foreground"
           >
             <svg
-              width="180"
-              height="32"
-              viewBox="0 0 180 32"
+              width="160"
+              height="40"
+              viewBox="0 0 160 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-auto"
+              className="h-9 w-auto"
               aria-hidden
             >
-              {/* Mark: C with horizontal hanger rod */}
-              <g transform="translate(2, 0)" fill="currentColor">
+              {/* Mark: C with horizontal hanger rod (geometric anchor) */}
+              <g transform="translate(2, 4)" fill="currentColor">
                 <path d="M 24 4 A 12 12 0 1 0 24 28 L 24 24.5 A 8.5 8.5 0 1 1 24 7.5 Z" />
                 <line
                   x1="24" y1="16" x2="32" y2="16"
@@ -91,14 +91,19 @@ export function Nav() {
                   strokeLinecap="round"
                 />
               </g>
-              {/* Wordmark: CLUXE in custom geometric letterforms */}
-              <g transform="translate(44, 0)" fill="currentColor">
-                <path d="M 8 7 A 9 9 0 1 0 8 25 L 8 22 A 6 6 0 1 1 8 10 Z" />
-                <path d="M 20 6 H 23 V 23 H 32 V 26 H 20 Z" />
-                <path d="M 40 6 H 43 V 20 A 3.5 3.5 0 0 0 50 20 V 6 H 53 V 20 A 6.5 6.5 0 0 1 40 20 Z" />
-                <path d="M 61 6 H 64 L 69.5 13 L 75 6 H 78 L 71 14.8 L 78.5 24 V 26 H 75.5 L 69.5 18.6 L 63.5 26 H 60.5 V 24 L 68 14.8 Z" />
-                <path d="M 86 6 H 99 V 9 H 89 V 14.5 H 97 V 17.5 H 89 V 23 H 99 V 26 H 86 Z" />
-              </g>
+              {/* Wordmark: CLUXE in Italiana (calligraphic fashion italic) */}
+              <text
+                x="48"
+                y="30"
+                fill="currentColor"
+                style={{
+                  fontFamily: "var(--font-italiana), 'Italiana', Georgia, serif",
+                  fontSize: "30px",
+                  letterSpacing: "0.18em",
+                }}
+              >
+                CLUXE
+              </text>
             </svg>
           </Link>
 
